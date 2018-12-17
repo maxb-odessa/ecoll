@@ -1,0 +1,47 @@
+---
+
+
+##############################################
+# cwatch event collector config block start
+##############################################
+
+cwatch-ecoll:
+  # pid file location; don't create if absent
+  pid-file: /tmp/cwatch-ecoll.pid
+  # log file location; use stderr if absent
+  #log-file: /tmp/cwatch-ecoll.log
+  # daemonization flag; default is disabled
+  daemon: 0
+  # log debug messages flag; default is disabled
+  debug: 1
+
+  # events cache settings
+  # events will be flushed to DB if cache is full OR flush 
+  # delay seconds passed (whichever occures first)
+  # events are flushed by separate thread, max num of threads are 32 
+  cache:
+    # events cache size; min is 8 events, default is 8192
+    size: 16384
+    # flush collected events to DB after that seconds; default is 60
+    flush-delay: 30
+
+  # database connection settings and queries
+  db:
+    # db connect URI format: file:////tmp/db.sqlite3?mode=rw&cache=shared (sqlite > 3.7.10)
+    # config db connection string; required
+    config: /tmp/domains.db
+    # events db connection string; required ('cache=shared' is strongly recommended)
+    events: /tmp/events.db
+    # query to fetch directories to monitor; required
+    get-dirs: select docroot from DOMAINS
+    # query to fetch 'include mask' (will be applied at found dirs first)
+    get-inc: select pattern from POLICIES where policy = 1
+    # query to fetch 'exclude mask' (will be applied at found dirs after 'include' passed)
+    get-exc: select pattern from POLICIES where policy = 0
+    # query to store events; 'path', 'is_dir', 'event' and 'timestamp' will be substed in that order
+    store-events: insert into INOTIFY(filepath, is_dir, event, timestamp) values(?, ?, ?, ?)
+
+##############################################
+# cwatch event collector config block end
+##############################################
+

@@ -1,0 +1,15 @@
+
+what is it
+----------
+This simple thingie monitors FS changes and logs them into sqlite db.
+You may find it completely useless, so take it easy.
+
+
+
+notes
+-----
+- to raise max num of monitored objects, ex:
+  echo 1024000 > /proc/sys/fs/inotify/max_user_watches
+- to build debug version:
+  DEBUG=1 make
+
